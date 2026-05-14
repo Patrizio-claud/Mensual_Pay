@@ -1,231 +1,798 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💖 Para Ti Mi Amor 💖</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MensualPay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+    :root {
+      --bg: #0a0c0f;
+      --surface: #111418;
+      --surface2: #181c21;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --accent: #00e5a0;
+      --accent-dim: rgba(0,229,160,0.12);
+      --accent-glow: rgba(0,229,160,0.25);
+      --text: #f0f2f5;
+      --text-muted: #6b7585;
+      --text-soft: #9ba5b4;
+      --danger: #ff4d6a;
+      --warning: #ffb830;
+      --gold: #f5c842;
+      --mono: 'DM Mono', monospace;
+      --sans: 'Sora', sans-serif;
+      --radius: 12px;
+      --radius-lg: 18px;
+    }
 
-/* SOBRE */
-.sobre {
-  position: relative;
-  width: 300px;
-  height: 200px;
-  background: #f1c0c8;
-  border-radius: 12px;
-  box-shadow: 0 15px 40px rgba(0,0,0,.3);
-  cursor: pointer;
-  overflow: visible;
-}
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* SOLAPA */
-.solapa {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 150px solid transparent;
-  border-right: 150px solid transparent;
-  border-top: 100px solid #eaa0aa;
-  transform-origin: top;
-  transition: transform 1s ease;
-  z-index: 1;
-  pointer-events: none;
-}
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: var(--accent);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 18px; height: 18px; fill: #0a0c0f; }
+    .logo-text { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+    .logo-text span { color: var(--accent); }
+    .topbar-right { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
 
-.sobre.abierto .solapa {
-  transform: rotateX(180deg);
-  z-index: 0;
-}
+    /* LAYOUT */
+    .layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      flex: 1;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+    }
 
-/* CARTA */
-.carta {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transform: translateY(18px);
-  transition: all 1s ease;
-  z-index: 2;
-}
+    /* LEFT PANEL */
+    .panel-left {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
 
-.sobre.abierto .carta {
-  opacity: 1;
-  transform: translateY(8px);
-}
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
 
-/* TARJETA */
-.tarjeta {
-  background: #fff;
-  padding: 16px;
-  border-radius: 20px;
-  text-align: center;
-  width: 85%;
-  max-width: 260px;
-  box-shadow: 0 18px 35px rgba(0,0,0,0.25);
-}
+    /* FORM */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 12px; color: var(--text-soft); font-weight: 500; }
+    .form-group input, .form-group select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      font-family: var(--sans);
+      padding: 11px 14px;
+      outline: none;
+      transition: border 0.2s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.5);
+      cursor: pointer;
+    }
 
-.tarjeta img {
-  width: 100%;
-  border-radius: 15px;
-  margin-bottom: 8px;
-}
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-h1 {
-  color: #e63946;
-  font-size: 20px;
-  margin: 6px 0;
-}
+    /* TARIFAS */
+    .tarifas-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .tarifa-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+    .tarifa-card .t-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+    .tarifa-card .t-value {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .tarifa-card input.t-input {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 500;
+      width: 100%;
+      outline: none;
+      padding: 0;
+    }
+    .tarifa-card input.t-input:focus { color: var(--text); }
 
-p {
-  font-size: 14px;
-  color: #444;
-}
+    /* BUTTON */
+    .btn-calc {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #0a0c0f;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--sans);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+    .btn-calc:hover { opacity: 0.88; }
+    .btn-calc:active { transform: scale(0.98); }
 
-button {
-  margin-top: 10px;
-  background: #e63946;
-  color: white;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 30px;
-  font-size: 15px;
-  cursor: pointer;
-}
+    /* RESULT CARD */
+    .result-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: none;
+    }
+    .result-card.show { display: block; animation: fadeUp 0.3s ease; }
 
-/* MENSAJE */
-.mensaje {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.35);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-.mensaje div {
-  background: white;
-  padding: 25px;
-  border-radius: 20px;
-  font-size: 18px;
-  text-align: center;
-}
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .result-fecha { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+    .feriado-badge {
+      background: rgba(245,200,66,0.15);
+      color: var(--gold);
+      border: 1px solid rgba(245,200,66,0.3);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.8px;
+      display: none;
+    }
+    .feriado-badge.show { display: block; }
 
-/* CORAZONES */
-.corazon {
-  position: absolute;
-  bottom: -20px;
-  animation: flotar 6s linear forwards;
-  pointer-events: none;
-}
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .result-row:last-of-type { border-bottom: none; }
+    .result-row .r-label { color: var(--text-soft); }
+    .result-row .r-val { font-family: var(--mono); font-weight: 500; }
+    .result-row .r-val.nocturno { color: #a78bfa; }
+    .result-row .r-val.diurno { color: #60a5fa; }
 
-@keyframes flotar {
-  to {
-    transform: translateY(-120vh);
-    opacity: 0;
-  }
-}
+    .total-row {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,229,160,0.2);
+      border-radius: var(--radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .total-row .t-label { font-size: 12px; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; }
+    .total-row .t-amount { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--accent); }
 
-/* HELLO KITTY */
-.kitty {
-  position: absolute;
-  bottom: -60px;
-  animation: flotarKitty 8s linear forwards;
-  pointer-events: none;
-}
+    .btn-guardar {
+      width: 100%;
+      margin-top: 14px;
+      padding: 11px;
+      background: transparent;
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius);
+      color: var(--text-soft);
+      font-size: 13px;
+      font-family: var(--sans);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-guardar:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
-@keyframes flotarKitty {
-  to {
-    transform: translateY(-130vh) rotate(20deg);
-    opacity: 0;
-  }
-}
+    /* RIGHT PANEL - HISTORIAL */
+    .panel-right {
+      overflow-y: auto;
+      padding: 28px 32px;
+      background: var(--bg);
+    }
 
-/* CELULAR */
-@media (max-width: 480px) {
-  .sobre {
-    width: 270px;
-    height: 185px;
-  }
+    .historial-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .historial-header h2 { font-size: 16px; font-weight: 600; }
 
-  .solapa {
-    border-left: 135px solid transparent;
-    border-right: 135px solid transparent;
-    border-top: 95px solid #eaa0aa;
-  }
-}
-</style>
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .stat-card .s-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+    .stat-card .s-val { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
+    .stat-card .s-val.green { color: var(--accent); }
+    .stat-card .s-val.purple { color: #a78bfa; }
+
+    /* FILTROS */
+    .filtros {
+      display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .filtro-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-family: var(--sans);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filtro-btn.active, .filtro-btn:hover {
+      background: var(--accent-dim);
+      border-color: rgba(0,229,160,0.3);
+      color: var(--accent);
+    }
+
+    /* HISTORIAL TABLE */
+    .historial-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .historial-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+    }
+    .historial-table td {
+      padding: 13px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .historial-table tr:last-child td { border-bottom: none; }
+    .historial-table tr:hover td { background: var(--surface); }
+    .historial-table td.mono { font-family: var(--mono); }
+    .historial-table td.total-cell { color: var(--accent); font-family: var(--mono); font-weight: 500; font-size: 14px; }
+
+    .badge-feriado {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(245,200,66,0.12);
+      color: var(--gold);
+      border: 1px solid rgba(245,200,66,0.25);
+      margin-left: 6px;
+      vertical-align: middle;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-del {
+      background: none; border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .btn-del:hover { color: var(--danger); background: rgba(255,77,106,0.1); }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .e-icon { font-size: 40px; margin-bottom: 14px; opacity: 0.3; }
+    .empty-state p { font-size: 14px; }
+
+    .btn-clear-all {
+      font-size: 11px;
+      padding: 5px 12px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: all 0.2s;
+    }
+    .btn-clear-all:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    /* HORA BADGE */
+    .hora-range {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+    .hora-range .sep { color: var(--text-muted); margin: 0 3px; }
+
+    /* TOOLTIP nocturno */
+    .nocturno-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      background: #a78bfa;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; height: auto; }
+      .panel-left { border-right: none; border-bottom: 1px solid var(--border); }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .panel-right { padding: 20px 16px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="sobre" onclick="abrirSobre()">
-  <div class="solapa"></div>
-
-  <div class="carta">
-    <div class="tarjeta">
-      <img src="foto.jpg">
-      <h1>Oliss mi Amoooor ❤️</h1>
-      <p>
-        Desde que te conocí mi mundo cambió 💖<br>
-        ¿Quieres ser mi San Valentín? 💕
-      </p>
-      <button onclick="mostrarMensaje(event)">Toca aquí</button>
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+      </svg>
     </div>
+    <span class="logo-text">Mensual<span>Pay</span></span>
+  </div>
+  <div class="topbar-right" id="reloj">--:-- --</div>
+</header>
+
+<div class="layout">
+
+  <!-- PANEL IZQUIERDO -->
+  <div class="panel-left">
+
+    <div>
+      <p class="section-label">Registrar turno</p>
+
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="fecha">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ingreso</label>
+          <input type="time" id="horaIngreso">
+        </div>
+        <div class="form-group">
+          <label>Salida</label>
+          <input type="time" id="horaSalida">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Trabajador (opcional)</label>
+        <input type="text" id="trabajador" placeholder="Nombre o ID">
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">Tarifas (S/.)</p>
+      <div class="tarifas-grid">
+        <div class="tarifa-card">
+          <div class="t-label">Hora base</div>
+          <input class="t-input" type="number" id="tarifaBase" value="5.43" step="0.01">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">Recargo nocturno</div>
+          <input class="t-input" type="number" id="recargoNocturno" value="1.90" step="0.01">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">Multiplicador feriado</div>
+          <input class="t-input" type="number" id="multiplicadorFeriado" value="2" step="0.1">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">Horario nocturno</div>
+          <div class="t-value" style="color:var(--text-soft);font-size:12px;">22:00 — 06:00</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button class="btn-calc" onclick="calcular()">Calcular turno</button>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-fecha" id="r-fecha">—</div>
+        <div class="feriado-badge" id="r-feriado">FERIADO ×2</div>
+      </div>
+
+      <div class="result-row">
+        <span class="r-label">Horas totales</span>
+        <span class="r-val mono" id="r-horas">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label"><span class="nocturno-dot"></span>Horas nocturnas</span>
+        <span class="r-val nocturno" id="r-noct">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label">Horas diurnas</span>
+        <span class="r-val diurno" id="r-diur">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label">Pago diurno</span>
+        <span class="r-val" id="r-pdiur">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label">Pago nocturno</span>
+        <span class="r-val nocturno" id="r-pnoct">—</span>
+      </div>
+
+      <div class="total-row">
+        <span class="t-label">TOTAL</span>
+        <span class="t-amount" id="r-total">—</span>
+      </div>
+
+      <button class="btn-guardar" onclick="guardarRegistro()">Guardar en historial</button>
+    </div>
+
+  </div>
+
+  <!-- PANEL DERECHO -->
+  <div class="panel-right">
+
+    <div class="historial-header">
+      <h2>Historial de turnos</h2>
+      <button class="btn-clear-all" onclick="limpiarTodo()">Borrar todo</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="s-label">Turnos</div>
+        <div class="s-val" id="st-turnos">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Total ganado</div>
+        <div class="s-val green" id="st-total">S/. 0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Hrs nocturnas</div>
+        <div class="s-val purple" id="st-noct">0.0 h</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Promedio/turno</div>
+        <div class="s-val" id="st-prom">S/. 0.00</div>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros">
+      <button class="filtro-btn active" onclick="filtrar('todos', this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrar('hoy', this)">Hoy</button>
+      <button class="filtro-btn" onclick="filtrar('semana', this)">Esta semana</button>
+      <button class="filtro-btn" onclick="filtrar('mes', this)">Este mes</button>
+      <button class="filtro-btn" onclick="filtrar('feriados', this)">Feriados</button>
+    </div>
+
+    <!-- TABLA -->
+    <div id="historialContainer"></div>
+
   </div>
 </div>
 
 <script>
-function abrirSobre() {
-  document.querySelector(".sobre").classList.add("abierto");
-}
+  // ─── DB LOCAL ───────────────────────────────────────────────
+  const DB_KEY = 'mensualpay_registros';
 
-function mostrarMensaje(e) {
-  e.stopPropagation();
-  const m = document.createElement("div");
-  m.className = "mensaje";
-  m.innerHTML = `<div>💖<br>Eres el amor de mi vida Kami<br>💖</div>`;
-  document.body.appendChild(m);
-  m.onclick = () => m.remove();
-}
+  function getDB() {
+    try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; }
+    catch { return []; }
+  }
 
-/* corazones */
-setInterval(() => {
-  const c = document.createElement("div");
-  c.className = "corazon";
-  c.innerText = Math.random() > 0.5 ? "❤️" : "💖";
-  c.style.left = Math.random() * 100 + "vw";
-  c.style.fontSize = (14 + Math.random() * 26) + "px";
-  document.body.appendChild(c);
-  setTimeout(() => c.remove(), 6000);
-}, 150);
+  function saveDB(data) {
+    localStorage.setItem(DB_KEY, JSON.stringify(data));
+  }
 
-/* hello kitty */
-setInterval(() => {
-  const k = document.createElement("img");
-  k.src = "hello.png";
-  k.className = "kitty";
-  k.style.left = Math.random() * 100 + "vw";
-  k.style.width = (40 + Math.random() * 30) + "px";
-  document.body.appendChild(k);
-  setTimeout(() => k.remove(), 8000);
-}, 1800);
+  // ─── RELOJ ───────────────────────────────────────────────────
+  function actualizarReloj() {
+    const now = new Date();
+    const opts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    document.getElementById('reloj').textContent = now.toLocaleTimeString('es-PE', opts);
+  }
+  setInterval(actualizarReloj, 1000);
+  actualizarReloj();
+
+  // Fecha por defecto = hoy
+  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+  // ─── FERIADOS PERÚ ───────────────────────────────────────────
+  const FERIADOS = ["01-01","04-17","04-18","05-01","06-29","07-28","07-29","08-06","08-30","10-08","11-01","12-08","12-25"];
+
+  // ─── CALCULAR ────────────────────────────────────────────────
+  let ultimoCalculo = null;
+
+  function calcular() {
+    const fecha    = document.getElementById('fecha').value;
+    const ingreso  = document.getElementById('horaIngreso').value;
+    const salida   = document.getElementById('horaSalida').value;
+    const tarifaBase     = parseFloat(document.getElementById('tarifaBase').value) || 5.43;
+    const recargoNoct    = parseFloat(document.getElementById('recargoNocturno').value) || 1.90;
+    const multiFeriado   = parseFloat(document.getElementById('multiplicadorFeriado').value) || 2;
+
+    if (!fecha || !ingreso || !salida) {
+      shake(document.querySelector('.btn-calc'));
+      return;
+    }
+
+    const partesFecha = fecha.split('-');
+    const mesDia = partesFecha[1] + '-' + partesFecha[2];
+    const esFeriado = FERIADOS.includes(mesDia);
+
+    const pI = ingreso.split(':');
+    const pS = salida.split(':');
+    let minI = parseInt(pI[0]) * 60 + parseInt(pI[1]);
+    let minS = parseInt(pS[0]) * 60 + parseInt(pS[1]);
+    if (minS <= minI) minS += 24 * 60;
+
+    const minTrabajados = minS - minI;
+    const horasTrabajadas = minTrabajados / 60;
+
+    let minNoct = 0;
+    for (let m = 0; m < minTrabajados; m++) {
+      const ha = ((minI + m) % (24 * 60)) / 60;
+      if (ha >= 22 || ha < 6) minNoct++;
+    }
+
+    const horasNoct = minNoct / 60;
+    const horasDiur = horasTrabajadas - horasNoct;
+    const horaBaseFinal = esFeriado ? tarifaBase * multiFeriado : tarifaBase;
+
+    const pagoDiur = horaBaseFinal * horasDiur;
+    const pagoNoct = (horaBaseFinal + recargoNoct) * horasNoct;
+    const total = pagoDiur + pagoNoct;
+
+    // Mostrar resultado
+    document.getElementById('r-fecha').textContent = formatearFecha(fecha) + ' · ' + ingreso + ' → ' + salida.padStart(5,'0');
+    document.getElementById('r-feriado').classList.toggle('show', esFeriado);
+    document.getElementById('r-horas').textContent = horasTrabajadas.toFixed(2) + ' h';
+    document.getElementById('r-noct').textContent  = horasNoct.toFixed(2) + ' h';
+    document.getElementById('r-diur').textContent  = horasDiur.toFixed(2) + ' h';
+    document.getElementById('r-pdiur').textContent = 'S/. ' + pagoDiur.toFixed(2);
+    document.getElementById('r-pnoct').textContent = 'S/. ' + pagoNoct.toFixed(2);
+    document.getElementById('r-total').textContent = 'S/. ' + total.toFixed(2);
+
+    document.getElementById('resultCard').classList.add('show');
+
+    ultimoCalculo = { fecha, ingreso, salida, horasTrabajadas, horasNoct, horasDiur, pagoDiur, pagoNoct, total, esFeriado, trabajador: document.getElementById('trabajador').value.trim(), id: Date.now() };
+  }
+
+  function shake(el) {
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'shake 0.4s';
+    setTimeout(() => el.style.animation = '', 500);
+  }
+
+  // ─── GUARDAR ────────────────────────────────────────────────
+  function guardarRegistro() {
+    if (!ultimoCalculo) return;
+    const db = getDB();
+    // Evitar duplicados por mismo id
+    if (db.find(r => r.id === ultimoCalculo.id)) return;
+    db.unshift(ultimoCalculo);
+    saveDB(db);
+    renderHistorial();
+    renderStats();
+
+    const btn = document.querySelector('.btn-guardar');
+    btn.textContent = '✓ Guardado';
+    btn.style.color = 'var(--accent)';
+    btn.style.borderColor = 'var(--accent)';
+    setTimeout(() => {
+      btn.textContent = 'Guardar en historial';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1800);
+  }
+
+  // ─── ELIMINAR ────────────────────────────────────────────────
+  function eliminarRegistro(id) {
+    const db = getDB().filter(r => r.id !== id);
+    saveDB(db);
+    renderHistorial();
+    renderStats();
+  }
+
+  function limpiarTodo() {
+    if (!confirm('¿Borrar todo el historial?')) return;
+    saveDB([]);
+    renderHistorial();
+    renderStats();
+  }
+
+  // ─── FILTRAR ─────────────────────────────────────────────────
+  let filtroActivo = 'todos';
+
+  function filtrar(tipo, btn) {
+    filtroActivo = tipo;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderHistorial();
+  }
+
+  function aplicarFiltro(registros) {
+    const hoy = new Date().toISOString().split('T')[0];
+    const ahora = new Date();
+    const lunesActual = new Date(ahora);
+    lunesActual.setDate(ahora.getDate() - ahora.getDay() + 1);
+    const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1).toISOString().split('T')[0];
+
+    switch (filtroActivo) {
+      case 'hoy':     return registros.filter(r => r.fecha === hoy);
+      case 'semana':  return registros.filter(r => r.fecha >= lunesActual.toISOString().split('T')[0]);
+      case 'mes':     return registros.filter(r => r.fecha >= primerDiaMes);
+      case 'feriados':return registros.filter(r => r.esFeriado);
+      default:        return registros;
+    }
+  }
+
+  // ─── RENDER HISTORIAL ────────────────────────────────────────
+  function renderHistorial() {
+    const container = document.getElementById('historialContainer');
+    const db = getDB();
+    const registros = aplicarFiltro(db);
+
+    if (registros.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="e-icon">📋</div>
+          <p>No hay registros en esta vista.<br>Calcula un turno y guárdalo.</p>
+        </div>`;
+      return;
+    }
+
+    const rows = registros.map(r => `
+      <tr>
+        <td>
+          ${formatearFecha(r.fecha)}
+          ${r.esFeriado ? '<span class="badge-feriado">FERIADO</span>' : ''}
+        </td>
+        <td>
+          <span class="hora-range">
+            ${r.ingreso}<span class="sep">→</span>${r.salida}
+          </span>
+        </td>
+        <td class="mono">${r.horasTrabajadas.toFixed(1)}h</td>
+        <td class="mono" style="color:#a78bfa">${r.horasNoct.toFixed(1)}h</td>
+        <td>${r.trabajador || '<span style="color:var(--text-muted)">—</span>'}</td>
+        <td class="total-cell">S/. ${r.total.toFixed(2)}</td>
+        <td><button class="btn-del" onclick="eliminarRegistro(${r.id})" title="Eliminar">✕</button></td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <table class="historial-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Turno</th>
+            <th>Horas</th>
+            <th>Nocturnas</th>
+            <th>Trabajador</th>
+            <th>Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  // ─── RENDER STATS ────────────────────────────────────────────
+  function renderStats() {
+    const db = getDB();
+    const total = db.reduce((s, r) => s + r.total, 0);
+    const noct  = db.reduce((s, r) => s + r.horasNoct, 0);
+    const prom  = db.length ? total / db.length : 0;
+
+    document.getElementById('st-turnos').textContent = db.length;
+    document.getElementById('st-total').textContent  = 'S/. ' + total.toFixed(2);
+    document.getElementById('st-noct').textContent   = noct.toFixed(1) + ' h';
+    document.getElementById('st-prom').textContent   = 'S/. ' + prom.toFixed(2);
+  }
+
+  // ─── UTILS ───────────────────────────────────────────────────
+  function formatearFecha(fecha) {
+    const [y, m, d] = fecha.split('-');
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
+  }
+
+  // ─── INIT ─────────────────────────────────────────────────────
+  renderHistorial();
+  renderStats();
+
+  // Animación shake CSS
+  const style = document.createElement('style');
+  style.textContent = `@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }`;
+  document.head.appendChild(style);
 </script>
-
 </body>
 </html>
