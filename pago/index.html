@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MensualPay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+      </svg>
+    </div>
+    <span class="logo-text">Mensual<span>Pay</span></span>
+  </div>
+  <div class="topbar-right" id="reloj">--:-- --</div>
+</header>
+
+<div class="layout">
+
+  <!-- PANEL IZQUIERDO -->
+  <div class="panel-left">
+
+    <div>
+      <p class="section-label">Registrar turno</p>
+
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="fecha">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ingreso</label>
+          <input type="time" id="horaIngreso">
+        </div>
+        <div class="form-group">
+          <label>Salida</label>
+          <input type="time" id="horaSalida">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Trabajador (opcional)</label>
+        <input type="text" id="trabajador" placeholder="Nombre o ID">
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">Tarifas (S/.)</p>
+      <div class="tarifas-grid">
+        <div class="tarifa-card">
+          <div class="t-label">Hora base</div>
+          <input class="t-input" type="number" id="tarifaBase" value="5.43" step="0.01">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">Recargo nocturno</div>
+          <input class="t-input" type="number" id="recargoNocturno" value="1.90" step="0.01">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">Multiplicador feriado</div>
+          <input class="t-input" type="number" id="multiplicadorFeriado" value="2" step="0.1">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">Horario nocturno</div>
+          <div class="t-value" style="color:var(--text-soft);font-size:12px;">22:00 — 06:00</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div>
+      <p class="section-label">Mi pago neto</p>
+      <div class="form-group">
+        <label>Sistema de pension</label>
+        <select id="regimenPension" onchange="actualizarCamposPension()">
+          <option value="afp">AFP</option>
+          <option value="onp">ONP</option>
+          <option value="ninguno">Sin descuento</option>
+        </select>
+      </div>
+
+      <div class="form-group pension-afp">
+        <label>AFP</label>
+        <select id="afpNombre" onchange="aplicarAFPReferencia()">
+          <option value="integra">Integra</option>
+          <option value="prima">Prima</option>
+          <option value="profuturo">Profuturo</option>
+          <option value="habitat">Habitat</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+
+      <div class="deducciones-grid">
+        <div class="tarifa-card">
+          <div class="t-label">Aporte fondo %</div>
+          <input class="t-input" type="number" id="aportePension" value="10" step="0.01">
+        </div>
+        <div class="tarifa-card pension-afp">
+          <div class="t-label">Comision %</div>
+          <input class="t-input" type="number" id="comisionAFP" value="1.55" step="0.01">
+        </div>
+        <div class="tarifa-card pension-afp">
+          <div class="t-label">Seguro AFP %</div>
+          <input class="t-input" type="number" id="seguroAFP" value="1.70" step="0.01">
+        </div>
+        <div class="tarifa-card">
+          <div class="t-label">EsSalud ref.</div>
+          <div class="t-value muted">9% empleador</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Adelantos</label>
+          <input type="number" id="descuentoAdelanto" value="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Otros descuentos</label>
+          <input type="number" id="descuentoOtros" value="0" step="0.01">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Cuanto te pagaron</label>
+        <input type="number" id="pagoRecibido" placeholder="Opcional" step="0.01">
+      </div>
+    </div>
+    <div>
+      <button class="btn-calc" onclick="calcular()">Calcular turno</button>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-fecha" id="r-fecha">—</div>
+        <div class="feriado-badge" id="r-feriado">FERIADO ×2</div>
+      </div>
+
+      <div class="result-row">
+        <span class="r-label">Horas totales</span>
+        <span class="r-val mono" id="r-horas">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label"><span class="nocturno-dot"></span>Horas nocturnas</span>
+        <span class="r-val nocturno" id="r-noct">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label">Horas diurnas</span>
+        <span class="r-val diurno" id="r-diur">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label">Pago diurno</span>
+        <span class="r-val" id="r-pdiur">—</span>
+      </div>
+      <div class="result-row">
+        <span class="r-label">Pago nocturno</span>
+        <span class="r-val nocturno" id="r-pnoct">—</span>
+      </div>
+
+      <div class="total-row">
+        <span class="t-label">TOTAL</span>
+        <span class="t-amount" id="r-total">—</span>
+      </div>
+
+
+
+      <div class="net-card">
+        <div class="net-head">
+          <span>Neto estimado</span>
+          <strong id="r-neto">-</strong>
+        </div>
+        <div class="result-row">
+          <span class="r-label">AFP/ONP fondo</span>
+          <span class="r-val" id="r-pension">-</span>
+        </div>
+        <div class="result-row pension-afp-result">
+          <span class="r-label">Comision AFP</span>
+          <span class="r-val" id="r-comision">-</span>
+        </div>
+        <div class="result-row pension-afp-result">
+          <span class="r-label">Seguro AFP</span>
+          <span class="r-val" id="r-seguro">-</span>
+        </div>
+        <div class="result-row">
+          <span class="r-label">Adelantos / otros</span>
+          <span class="r-val" id="r-desc-extra">-</span>
+        </div>
+        <div class="result-row">
+          <span class="r-label">EsSalud referencial</span>
+          <span class="r-val" id="r-essalud">-</span>
+        </div>
+        <div class="pay-check" id="payCheck">Ingresa cuanto te pagaron para comparar.</div>
+      </div>
+
+      <button class="btn-copy" onclick="copiarResumen()">Copiar resumen para WhatsApp</button>
+      <button class="btn-guardar" onclick="guardarRegistro()">Guardar en historial</button>
+    </div>
+
+  </div>
+
+  <!-- PANEL DERECHO -->
+  <div class="panel-right">
+
+    <div class="historial-header">
+      <h2>Historial de turnos</h2>
+      <div class="export-actions">
+        <button class="btn-export" onclick="exportarCSV()">Exportar Excel</button>
+        <button class="btn-export" onclick="exportarPDF()">Exportar PDF</button>
+        <button class="btn-clear-all" onclick="limpiarTodo()">Borrar todo</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="s-label">Turnos</div>
+        <div class="s-val" id="st-turnos">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Total ganado</div>
+        <div class="s-val green" id="st-total">S/. 0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Hrs nocturnas</div>
+        <div class="s-val purple" id="st-noct">0.0 h</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Promedio/turno</div>
+        <div class="s-val" id="st-prom">S/. 0.00</div>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros">
+      <button class="filtro-btn active" onclick="filtrar('todos', this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrar('hoy', this)">Hoy</button>
+      <button class="filtro-btn" onclick="filtrar('semana', this)">Esta semana</button>
+      <button class="filtro-btn" onclick="filtrar('mes', this)">Este mes</button>
+      <button class="filtro-btn" onclick="filtrar('feriados', this)">Feriados</button>
+    </div>
+
+    <!-- TABLA -->
+    <div id="historialContainer"></div>
+  </div>
+</div>
+<script src="sintaxis.js?v=4"></script>
+</body>
+</html>
